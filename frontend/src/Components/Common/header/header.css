@@ -1,0 +1,250 @@
+.main-app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1in;
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--header-border);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  transition: all 0.3s ease;
+}
+
+html.dark-theme .main-app-header,
+.dark-theme .main-app-header {
+  background: rgba(15, 23, 42, 0.92);
+  border-bottom-color: rgba(190, 147, 55, 0.35);
+  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 1024px) {
+  .main-app-header {
+    padding: 0.5rem 2.5rem;
+  }
+}
+
+.header-left-brand {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.header-logo {
+  height: 64px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.2s ease;
+}
+
+.header-logo:hover {
+  transform: scale(1.03);
+}
+
+.main-app-header h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--header-text);
+  transition: color 0.3s ease;
+}
+
+.header-right-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.2rem;
+}
+
+.header-user-container {
+  position: relative;
+}
+
+.profile-trigger-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  border-radius: 50px;
+  transition: background-color 0.2s ease;
+}
+
+.profile-trigger-btn:hover {
+  background-color: var(--header-border);
+}
+
+.user-avatar-img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #2563eb;
+}
+
+.user-avatar-initial {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1d4ed8 0%, #3b82f6 100%);
+  color: #ffffff;
+  font-size: 17px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+  border: 1.5px solid rgba(255, 255, 255, 0.9);
+  text-transform: uppercase;
+}
+
+/* Glassmorphic Dropdown Menu */
+.profile-dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 12px);
+  min-width: 260px;
+  width: max-content;
+  max-width: 360px;
+  background: var(--dropdown-bg);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid var(--dropdown-border);
+  border-radius: 20px;
+  padding: 16px;
+  box-shadow:
+    0 20px 40px -15px rgba(15, 23, 42, 0.15),
+    0 0 0 1px rgba(0, 0, 0, 0.03);
+  z-index: 200;
+  animation: dropdownFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  transition: background 0.3s ease, border-color 0.3s ease;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.dropdown-user-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 4px;
+}
+
+.dropdown-user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.dropdown-name {
+  font-size: 14.5px;
+  font-weight: 700;
+  color: var(--text-primary);
+  word-break: break-all;
+}
+
+.dropdown-email {
+  font-size: 12px;
+  color: var(--text-secondary);
+  word-break: break-all;
+  margin-top: 2px;
+}
+
+.role-badge {
+  display: inline-block;
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.role-badge.student,
+.role-badge.user {
+  background: #eff6ff;
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+}
+
+html.dark-theme .role-badge.student,
+html.dark-theme .role-badge.user,
+.dark-theme .role-badge.student,
+.dark-theme .role-badge.user {
+  background: rgba(37, 99, 235, 0.2);
+  color: #60a5fa;
+  border: 1px solid rgba(96, 165, 250, 0.3);
+}
+
+.role-badge.admin {
+  background: #fef2f2;
+  color: #dc2626;
+  border: 1px solid #fecaca;
+}
+
+html.dark-theme .role-badge.admin,
+.dark-theme .role-badge.admin {
+  background: rgba(220, 38, 38, 0.2);
+  color: #f87171;
+  border: 1px solid rgba(248, 113, 113, 0.3);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: var(--header-border);
+  margin: 12px 0;
+}
+
+.dropdown-logout-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.dropdown-logout-btn:hover {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
+html.dark-theme .dropdown-logout-btn,
+.dark-theme .dropdown-logout-btn {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+html.dark-theme .dropdown-logout-btn:hover,
+.dark-theme .dropdown-logout-btn:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #fca5a5;
+}
+
+.dropdown-logout-btn svg {
+  width: 18px;
+  height: 18px;
+}

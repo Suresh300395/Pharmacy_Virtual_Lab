@@ -1,0 +1,682 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&family=Open+Sans:ital,wght@0,300..800;1,300..800&family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+/* ==========================================================
+   GLOBAL THEME DESIGN TOKENS (LIGHT & DARK THEMES)
+   ========================================================== */
+
+/* 1. LIGHT THEME TOKENS (DEFAULT) */
+:root {
+  --bg-primary: aliceblue;
+  --bg-gradient: aliceblue;
+  --bg-top-curve: none;
+  --text-primary: #0f172a;
+  --text-secondary: #64748b;
+  --card-bg: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.25) 100%);
+  --card-border: rgba(255, 255, 255, 0.7);
+  --card-shadow: 0 20px 50px -10px rgba(30, 41, 59, 0.12), inset 0 0 25px 0 rgba(255, 255, 255, 0.6);
+  --input-bg: rgba(255, 255, 255, 0.35);
+  --input-border: rgba(255, 255, 255, 0.65);
+  --input-shadow: inset 0 2px 4px 0 rgba(255, 255, 255, 0.5), 0 4px 16px -4px rgba(37, 99, 235, 0.08);
+  --input-text: #0f172a;
+  --input-placeholder: #64748b;
+  --input-focus-bg: rgba(255, 255, 255, 0.65);
+  --input-focus-border: #0056b3;
+  --floating-label-bg: rgba(240, 246, 255, 0.95);
+  --floating-label-color: #0f172a;
+  --divider-line: rgba(203, 213, 225, 0.6);
+  --divider-bg: rgba(241, 245, 249, 0.7);
+  --header-bg: #ffffff;
+  --header-border: #e2e8f0;
+  --header-text: #1e293b;
+  --footer-badge-bg: rgba(255, 255, 255, 0.45);
+  --footer-badge-border: rgba(255, 255, 255, 0.7);
+  --badge-text-primary: #0f172a;
+  --badge-text-secondary: #64748b;
+  --dropdown-bg: rgba(255, 255, 255, 0.95);
+  --dropdown-border: #020C2A;
+  --btn-border: #020C2A;
+  --btn-text-initial: #020C2A;
+  --btn-hover-text: #ffffff;
+
+  /* Reusable Gradient Design Tokens */
+  --gradient-orange: linear-gradient(90deg, #ff7a00 0%, #ff4d00 100%);
+  --gradient-orange-hover: linear-gradient(90deg, #ff6a00 0%, #e63900 100%);
+  --gradient-orange-shadow: 0 6px 20px rgba(255, 122, 0, 0.35);
+  --color-orange-primary: #ff6b00;
+}
+
+/* 2. DARK THEME TOKENS */
+html.dark-theme,
+.dark-theme {
+  --bg-primary: #0b0f19;
+  --bg-gradient: #0b0f19;
+  --bg-top-curve: none;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --card-bg: linear-gradient(135deg, rgba(30, 41, 59, 0.6) 0%, rgba(15, 23, 42, 0.7) 100%);
+  --card-border: rgba(255, 255, 255, 0.15);
+  --card-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.6), inset 0 0 25px 0 rgba(190, 147, 55, 0.1);
+  --input-bg: rgba(15, 23, 42, 0.5);
+  --input-border: #be9337;
+  --input-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.3), 0 4px 16px -4px rgba(190, 147, 55, 0.15);
+  --input-text: #f8fafc;
+  --input-placeholder: #94a3b8;
+  --input-focus-bg: rgba(30, 41, 59, 0.85);
+  --input-focus-border: #be9337;
+  --floating-label-bg: #be9337;
+  --floating-label-color: #0b0f19;
+  --divider-line: rgba(190, 147, 55, 0.4);
+  --divider-bg: rgba(30, 41, 59, 0.8);
+  --header-bg: #0f172a;
+  --header-border: #be9337;
+  --header-text: #f8fafc;
+  --footer-badge-bg: rgba(30, 41, 59, 0.6);
+  --footer-badge-border: #be9337;
+  --badge-text-primary: #f8fafc;
+  --badge-text-secondary: #94a3b8;
+  --dropdown-bg: rgba(15, 23, 42, 0.95);
+  --dropdown-border: #be9337;
+  --btn-border: #be9337;
+  --btn-text-initial: #be9337;
+  --btn-hover-text: #0b0f19;
+
+  /* Reusable Gradient Design Tokens (Dark Mode) */
+  --gradient-orange: linear-gradient(90deg, #ff7a00 0%, #ff4d00 100%);
+  --gradient-orange-hover: linear-gradient(90deg, #ff8c1a 0%, #ff5c1a 100%);
+  --gradient-orange-shadow: 0 6px 22px rgba(255, 122, 0, 0.45);
+  --color-orange-primary: #ff7a00;
+}
+
+/* Hide bright border glow pseudoelement in dark theme */
+html.dark-theme .glass-card::before,
+.dark-theme .glass-card::before {
+  display: none !important;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(148, 163, 184, 0.5) transparent;
+}
+
+html.dark-theme *,
+.dark-theme * {
+  scrollbar-color: rgba(190, 147, 55, 0.5) transparent;
+}
+
+/* ==========================================================
+   GLOBAL CUSTOM REUSABLE SCROLLBAR (6PX WIDTH EVERYWHERE)
+   ========================================================== */
+::-webkit-scrollbar,
+*::-webkit-scrollbar {
+  width: 6px !important;
+  height: 6px !important;
+}
+
+::-webkit-scrollbar-track,
+*::-webkit-scrollbar-track {
+  background: transparent !important;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb,
+*::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.45) !important;
+  border-radius: 10px !important;
+  transition: background 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover,
+*::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.75) !important;
+}
+
+/* Dark Theme Scrollbar Thumb */
+html.dark-theme ::-webkit-scrollbar-thumb,
+html.dark-theme *::-webkit-scrollbar-thumb,
+.dark-theme ::-webkit-scrollbar-thumb,
+.dark-theme *::-webkit-scrollbar-thumb {
+  background: rgba(190, 147, 55, 0.45) !important;
+}
+
+html.dark-theme ::-webkit-scrollbar-thumb:hover,
+html.dark-theme *::-webkit-scrollbar-thumb:hover,
+.dark-theme ::-webkit-scrollbar-thumb:hover,
+.dark-theme *::-webkit-scrollbar-thumb:hover {
+  background: rgba(190, 147, 55, 0.85) !important;
+}
+
+::-webkit-scrollbar-button,
+*::-webkit-scrollbar-button,
+::-webkit-scrollbar-corner,
+*::-webkit-scrollbar-corner {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+html,
+body {
+  width: 100%;
+  min-height: 100vh;
+  font-family: 'Google Sans', 'Product Sans', 'Plus Jakarta Sans', 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Main Wrapper */
+.login-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  max-height: 100vh;
+  overflow: hidden;
+  background: var(--bg-gradient);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.2rem 3rem;
+  box-sizing: border-box;
+  transition: background 0.3s ease;
+}
+
+/* Background Elements */
+.bg-top-curve,
+.bg-left-glow,
+.bg-orb-1,
+.bg-orb-2,
+.far-left-shield {
+  display: none !important;
+}
+
+/* Main Layout Grid */
+.main-layout {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 3rem;
+  width: 100%;
+  max-width: 1350px;
+}
+
+/* Liquid Glass / Fluid Glass Login Card */
+.glass-card {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  background: var(--card-bg);
+  backdrop-filter: blur(25px) saturate(180%);
+  -webkit-backdrop-filter: blur(25px) saturate(180%);
+  border-radius: 32px;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  padding: 2.3rem 2.2rem;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  overflow: visible;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Vertical Theme Toggle Button on Card Right Border */
+.card-theme-toggle-wrapper {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translate(50%, -50%) rotate(90deg);
+  z-index: 25;
+}
+
+/* Pure Glass Border Highlight */
+.glass-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 32px;
+  padding: 1.5px;
+  background: linear-gradient(135deg,
+      rgba(255, 255, 255, 0.95) 0%,
+      rgba(255, 255, 255, 0.4) 50%,
+      rgba(255, 255, 255, 0.8) 100%);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Apple Liquid Glossy Reflection Sheen */
+.glass-card::after {
+  display: none;
+}
+
+/* Card Header */
+.card-header {
+  position: relative;
+  z-index: 3;
+  margin-bottom: 1.6rem;
+  text-align: left;
+}
+
+.card-header h1 {
+  font-size: 28px;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 6px 0;
+  letter-spacing: -0.5px;
+}
+
+.card-header .subtitle {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* Status Alert Messages */
+.status-alert {
+  position: relative;
+  z-index: 3;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 13.5px;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.status-alert.success {
+  background: rgba(220, 252, 231, 0.9);
+  color: #15803d;
+  border: 1px solid #86efac;
+}
+
+.status-alert.error {
+  background: rgba(254, 226, 226, 0.9);
+  color: #b91c1c;
+  border: 1px solid #fca5a5;
+}
+
+/* Form Styles */
+.login-form {
+  position: relative;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+  margin-top: 10px;
+}
+
+.input-field-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+/* Floating Pill Notch Badge Label */
+.floating-label {
+  position: absolute;
+  top: -11px;
+  left: 24px;
+  background: var(--floating-label-bg);
+  padding: 1px 8px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--floating-label-color);
+  border-radius: 6px;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.input-field-wrapper:focus-within .floating-label,
+.input-field-wrapper input:not(:placeholder-shown)~.floating-label,
+.input-field-wrapper:has(input:not(:placeholder-shown)) .floating-label {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stadium Pill Outlined Input */
+.input-field-wrapper input {
+  width: 100%;
+  padding: 14px 48px 14px 24px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--input-text);
+  background: var(--input-bg);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border: 1.5px solid var(--input-border);
+  box-shadow: var(--input-shadow);
+  border-radius: 50px;
+  outline: none;
+  transition: all 0.25s ease;
+  box-sizing: border-box;
+}
+
+.input-field-wrapper input::placeholder {
+  color: var(--input-placeholder);
+  font-weight: 400;
+  transition: opacity 0.2s ease;
+}
+
+.input-field-wrapper input:focus,
+.input-field-wrapper input:focus-visible {
+  background: var(--input-focus-bg);
+  border: 2px solid var(--input-focus-border);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3);
+}
+
+.input-field-wrapper input:focus::placeholder {
+  opacity: 0;
+}
+
+/* Dark Theme Explicit Input & Browser Autofill Fix */
+.dark-theme .input-field-wrapper input,
+html.dark-theme .input-field-wrapper input {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+.dark-theme .input-field-wrapper input::placeholder,
+html.dark-theme .input-field-wrapper input::placeholder {
+  color: #94a3b8 !important;
+}
+
+.dark-theme input:-webkit-autofill,
+.dark-theme input:-webkit-autofill:hover,
+.dark-theme input:-webkit-autofill:focus,
+.dark-theme input:-webkit-autofill:active,
+html.dark-theme input:-webkit-autofill {
+  -webkit-text-fill-color: #f8fafc !important;
+  -webkit-box-shadow: 0 0 0px 1000px #1e293b inset !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 14px;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 4;
+  transition: color 0.2s ease;
+}
+
+.input-field-wrapper:focus-within .toggle-password-btn {
+  color: #2563eb;
+}
+
+.toggle-password-btn:hover {
+  color: var(--text-primary);
+}
+
+.toggle-password-btn svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* Options row: Forgot Password */
+.form-options {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  font-size: 13px;
+  margin-top: 2px;
+}
+
+.forgot-link {
+  color: #2563eb;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.2s;
+}
+
+.forgot-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* Reusable Stadium Button with Left-to-Right Hover Fill Animation */
+.submit-btn {
+  position: relative;
+  width: 100%;
+  height: 48px;
+  margin-top: 8px;
+  background: transparent;
+  color: var(--btn-text-initial);
+  border: 2px solid var(--btn-border);
+  font-family: 'Google Sans', 'Product Sans', 'Plus Jakarta Sans', 'Inter', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  z-index: 1;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  transition: color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), border-color 0.4s ease, box-shadow 0.4s ease;
+}
+
+.submit-btn::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: var(--btn-border);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  z-index: 1;
+  border-radius: 50px;
+}
+
+.submit-btn span {
+  position: relative;
+  z-index: 2;
+  transition: color 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.submit-btn:hover::before {
+  transform: scaleX(1);
+}
+
+.submit-btn:hover span {
+  color: var(--btn-hover-text);
+}
+
+.submit-btn:hover {
+  border-color: transparent !important;
+  outline: none !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.22);
+}
+
+.submit-btn:active {
+  transform: scale(0.99);
+}
+
+.btn-arrow-circle {
+  position: absolute;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.submit-btn:hover .btn-arrow-circle {
+  transform: translateX(2px);
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.btn-arrow-circle svg {
+  width: 16px;
+  height: 16px;
+  color: #ffffff;
+}
+
+/* Divider */
+.divider {
+  position: relative;
+  text-align: center;
+  margin: 1.2rem 0 1rem 0;
+}
+
+.divider::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  height: 1px;
+  background: var(--divider-line);
+}
+
+.divider span {
+  position: relative;
+  padding: 0 12px;
+  background: var(--divider-bg);
+  backdrop-filter: blur(4px);
+  font-size: 12px;
+  color: var(--text-secondary);
+  border-radius: 10px;
+}
+
+/* Footer */
+.card-footer {
+  font-size: 13.5px;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.register-link {
+  color: #2563eb;
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.register-link:hover {
+  color: #1d4ed8;
+  text-decoration: underline;
+}
+
+/* Right Section Layout */
+.right-section {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2.2rem;
+  max-width: 780px;
+}
+
+.hero-image-wrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-image {
+  width: 100%;
+  height: auto;
+  max-height: 75vh;
+  object-fit: contain;
+  filter: none;
+}
+
+/* Responsive Styles */
+@media (max-width: 1100px) {
+  .login-wrapper {
+    padding: 2rem;
+  }
+
+  .main-layout {
+    gap: 2rem;
+  }
+}
+
+@media (max-width: 960px) {
+  .login-wrapper {
+    height: auto;
+    min-height: 100vh;
+    overflow-y: auto;
+  }
+
+  .main-layout {
+    flex-direction: column-reverse;
+    gap: 2.5rem;
+  }
+
+  .glass-card {
+    max-width: 480px;
+  }
+
+  .right-section {
+    max-width: 100%;
+  }
+
+  .far-left-shield {
+    display: none;
+  }
+}
+
+@media (max-width: 520px) {
+  .login-wrapper {
+    padding: 1rem;
+  }
+
+  .glass-card {
+    padding: 1.6rem 1.4rem;
+    border-radius: 20px;
+  }
+
+  .card-header h1 {
+    font-size: 24px;
+  }
+}
