@@ -1,223 +1,6 @@
-/* Experiment_main_page.css - Virtual Lab Apparatus Page Styles */
+/* Experiment.css - Experiment Specific Styles & Interactive Apparatus Animations */
 
-.vlab-experiment-page {
-  width: 100%;
-  min-height: 100vh;
-  background-color: var(--bg-primary, #f8fafc);
-  color: var(--text-primary, #0f172a);
-  display: flex;
-  flex-direction: column;
-  transition: background-color 0.3s ease, color 0.3s ease;
-}
-
-.vlab-main-container {
-  flex: 1;
-  width: 100%;
-  max-width: 1600px;
-  margin: 0 auto;
-  padding: 1rem 2rem 3rem 2rem;
-  box-sizing: border-box;
-}
-
-/* Top Header Row (Back Button + Red Banner on Same Line) */
-.vlab-header-row {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.2rem;
-  width: 100%;
-}
-
-.vlab-header-row .vlab-back-btn {
-  flex-shrink: 0;
-  height: 42px;
-  border-radius: 8px;
-}
-
-.vlab-back-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 16px;
-  font-size: 13.5px;
-  font-weight: 600;
-  font-family: inherit;
-  color: var(--text-secondary);
-  background: var(--card-bg, #ffffff);
-  border: 1px solid var(--divider-line, #cbd5e1);
-  border-radius: 8px;
-  cursor: pointer;
-  transition: all 0.25s ease;
-}
-
-.vlab-back-btn:hover {
-  color: var(--text-primary);
-  border-color: #3b82f6;
-  transform: translateX(-2px);
-}
-
-html.dark-theme .vlab-back-btn,
-.dark-theme .vlab-back-btn {
-  background: rgba(15, 23, 42, 0.7);
-  border-color: rgba(190, 147, 55, 0.3);
-}
-
-.vlab-back-btn svg {
-  width: 18px;
-  height: 18px;
-}
-
-.vlab-header-row .vlab-red-banner {
-  flex: 1;
-  margin-bottom: 0;
-  height: 42px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 16px;
-}
-
-.vlab-red-banner {
-  background: transparent;
-  color: #dc2626;
-  border: 1.5px solid #dc2626;
-  border-radius: 8px;
-  text-align: center;
-  box-shadow: none;
-}
-
-.vlab-red-banner h2 {
-  font-size: 15px;
-  font-weight: 800;
-  letter-spacing: 0.5px;
-  margin: 0;
-  color: #dc2626;
-  line-height: 1.4;
-}
-
-/* 2. Sub-Header Navigation Tabs Bar (Segmented Stadium Pill Control) */
-.vlab-nav-tabs-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 1.5rem;
-  width: 100%;
-}
-
-.vlab-segmented-tab-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  padding: 5px;
-  background: #ffffff;
-  border: 1.5px solid #cbd5e1;
-  border-radius: 50px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
-}
-
-html.dark-theme .vlab-segmented-tab-pill,
-.dark-theme .vlab-segmented-tab-pill {
-  background: #0f172a;
-  border-color: rgba(190, 147, 55, 0.4);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
-}
-
-button.vlab-tab-pill-btn,
-.vlab-tab-pill-btn {
-  appearance: none;
-  -webkit-appearance: none;
-  border: none !important;
-  outline: none !important;
-  background: transparent;
-  padding: 8px 22px;
-  font-family: inherit;
-  font-size: 13.5px;
-  font-weight: 600;
-  color: #475569;
-  border-radius: 50px;
-  cursor: pointer;
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-  white-space: nowrap;
-}
-
-html.dark-theme button.vlab-tab-pill-btn,
-.dark-theme .vlab-tab-pill-btn {
-  color: #94a3b8;
-}
-
-button.vlab-tab-pill-btn:hover,
-.vlab-tab-pill-btn:hover {
-  color: #0f172a;
-}
-
-html.dark-theme button.vlab-tab-pill-btn:hover,
-.dark-theme .vlab-tab-pill-btn:hover {
-  color: #f8fafc;
-}
-
-button.vlab-tab-pill-btn.active,
-.vlab-tab-pill-btn.active {
-  color: #ffffff !important;
-  background: var(--gradient-orange, linear-gradient(90deg, #ff7a00 0%, #ff4d00 100%)) !important;
-  font-weight: 700;
-  box-shadow: var(--gradient-orange-shadow, 0 4px 14px rgba(255, 122, 0, 0.4)) !important;
-}
-
-html.dark-theme button.vlab-tab-pill-btn.active,
-.dark-theme .vlab-tab-pill-btn.active {
-  background: var(--gradient-orange, linear-gradient(90deg, #ff7a00 0%, #ff4d00 100%)) !important;
-  color: #ffffff !important;
-  box-shadow: var(--gradient-orange-shadow, 0 4px 14px rgba(255, 122, 0, 0.45)) !important;
-}
-
-/* Unified Parent Card Container */
-.vlab-parent-card {
-  background: var(--card-bg, #ffffff);
-  border: 1px solid var(--divider-line, #cbd5e1);
-  border-radius: 20px;
-  padding: 1.8rem;
-  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.05);
-  transition: background 0.3s ease, border-color 0.3s ease;
-}
-
-html.dark-theme .vlab-parent-card,
-.dark-theme .vlab-parent-card {
-  background: rgba(15, 23, 42, 0.85);
-  border-color: rgba(190, 147, 55, 0.3);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(16px);
-}
-
-/* 3. Main Stage Container */
-.vlab-stage-container {
-  background: transparent;
-  border: none;
-  padding: 1.5rem 0 0 0;
-  min-height: 480px;
-  box-shadow: none;
-}
-
-/* Stage Status Bar */
-.stage-status-bar {
-  background: rgba(59, 130, 246, 0.08);
-  border: 1px solid rgba(59, 130, 246, 0.2);
-  color: #2563eb;
-  padding: 8px 16px;
-  border-radius: 8px;
-  font-size: 13px;
-  font-weight: 600;
-  text-align: center;
-  margin-bottom: 1.5rem;
-}
-
-html.dark-theme .stage-status-bar,
-.dark-theme .stage-status-bar {
-  background: rgba(250, 204, 21, 0.1);
-  border-color: rgba(250, 204, 21, 0.25);
-  color: #facc15;
-}
-
-/* Top Mice Cluster & Video Player */
+/* 1. Top Mice Cluster & Video Player */
 .top-mice-cluster {
   display: flex;
   justify-content: center;
@@ -591,6 +374,69 @@ html.dark-theme .select-group-info-pill,
   color: #ef4444;
 }
 
+/* Result Tab Styling */
+.result-card-box {
+  background: var(--input-bg, #f8fafc);
+  border: 1px solid var(--input-border, #cbd5e1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.result-card-box p {
+  font-size: 15px;
+  line-height: 1.6;
+  margin: 0;
+}
+
+.result-stats {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.stat-badge {
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 12px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+html.dark-theme .stat-badge {
+  background: #1e293b;
+  border-color: #334155;
+}
+
+.stat-badge .lbl {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.stat-badge .val {
+  font-size: 18px;
+  font-weight: 800;
+  color: #2563eb;
+}
+
+.stat-badge.alert .val {
+  color: #dc2626;
+}
+
+.final-conclusion {
+  background: rgba(37, 99, 235, 0.08);
+  border-left: 4px solid #2563eb;
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 14.5px;
+  color: var(--text-primary);
+}
+
 /* Modal Overlay */
 .vlab-modal-overlay {
   position: fixed;
@@ -640,20 +486,16 @@ html.dark-theme .select-group-info-pill,
   line-height: 1.5;
 }
 
-/* ==========================================================
-   ANIMATED MOUSE TRANSFER TO VEHICLE & DRUG TRAYS
-   ========================================================== */
+/* Animated Mouse Transfer Animations */
 @keyframes move-to-left-tray {
   0% {
     transform: translate(0, 0) scale(1);
     opacity: 1;
   }
-
   50% {
     transform: translate(-180px, 90px) scale(1.2);
     opacity: 0.9;
   }
-
   100% {
     transform: translate(-320px, 160px) scale(0.6);
     opacity: 0;
@@ -665,12 +507,10 @@ html.dark-theme .select-group-info-pill,
     transform: translate(0, 0) scale(1);
     opacity: 1;
   }
-
   50% {
     transform: translate(180px, 90px) scale(1.2);
     opacity: 0.9;
   }
-
   100% {
     transform: translate(320px, 160px) scale(0.6);
     opacity: 0;
@@ -685,41 +525,23 @@ html.dark-theme .select-group-info-pill,
   animation: move-to-right-tray 1.1s cubic-bezier(0.25, 0.8, 0.25, 1) forwards !important;
 }
 
-.migrating-left.delay-1 {
-  animation-delay: 0s !important;
-}
+.migrating-left.delay-1 { animation-delay: 0s !important; }
+.migrating-left.delay-2 { animation-delay: 0.2s !important; }
+.migrating-left.delay-3 { animation-delay: 0.4s !important; }
 
-.migrating-left.delay-2 {
-  animation-delay: 0.2s !important;
-}
-
-.migrating-left.delay-3 {
-  animation-delay: 0.4s !important;
-}
-
-.migrating-right.delay-1 {
-  animation-delay: 0.1s !important;
-}
-
-.migrating-right.delay-2 {
-  animation-delay: 0.3s !important;
-}
-
-.migrating-right.delay-3 {
-  animation-delay: 0.5s !important;
-}
+.migrating-right.delay-1 { animation-delay: 0.1s !important; }
+.migrating-right.delay-2 { animation-delay: 0.3s !important; }
+.migrating-right.delay-3 { animation-delay: 0.5s !important; }
 
 @keyframes pop-in-tray {
   0% {
     transform: scale(0) translateY(-15px);
     opacity: 0;
   }
-
   70% {
     transform: scale(1.25) translateY(0);
     opacity: 1;
   }
-
   100% {
     transform: scale(1) translateY(0);
     opacity: 1;

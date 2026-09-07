@@ -1,49 +1,41 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import Header from '../../Common/header/header'
 import Footer from '../../Common/footer/Footer'
 import Button from '../../Common/button/Button'
-import ExperimentMainPage from './Experiment_main_page'
+import { getExperimentById } from '../../../utils/experimentUtils'
 import './welcome_page.css'
 
-function WelcomePage({ experiment, onBack, user, onLogout }) {
-    const [showMainExperiment, setShowMainExperimentState] = useState(() => {
-        try {
-            return localStorage.getItem('vlab_show_main_experiment') === 'true'
-        } catch {
-            return false
-        }
-    })
+function WelcomePage({ experiment: initialExperiment, user, onLogout, expId: propExpId }) {
+    const navigate = useNavigate()
+    const params = useParams()
+    const location = useLocation()
+    const [experiment, setExperiment] = useState(initialExperiment || null)
 
-    const handleLaunchMainExperiment = () => {
-        setShowMainExperimentState(true)
-        try {
-            localStorage.setItem('vlab_show_main_experiment', 'true')
-        } catch (e) {
-            console.error('Failed to save vlab_show_main_experiment:', e)
-        }
-    }
+    const targetId = propExpId || params.id || location.pathname.match(/\/experiment(?:_|\/)([^\/_]+)/)?.[1] || '1'
 
-    const handleBackFromMainExperiment = () => {
-        setShowMainExperimentState(false)
-        try {
-            localStorage.removeItem('vlab_show_main_experiment')
-        } catch (e) {
-            console.error('Failed to clear vlab_show_main_experiment:', e)
+    useEffect(() => {
+        if (!initialExperiment) {
+            fetch(`http://localhost:3003/api/experiments/${targetId}`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success && data.experiment) {
+                        setExperiment(data.experiment)
+                    } else {
+                        setExperiment(getExperimentById(targetId))
+                    }
+                })
+                .catch(() => {
+                    setExperiment(getExperimentById(targetId))
+                })
+        } else {
+            setExperiment(initialExperiment)
         }
-    }
+    }, [initialExperiment, targetId])
 
     if (!experiment) return null
 
-    if (showMainExperiment) {
-        return (
-            <ExperimentMainPage
-                experiment={experiment}
-                onBack={handleBackFromMainExperiment}
-                user={user}
-                onLogout={onLogout}
-            />
-        )
-    }
+    const expId = experiment.experimentId || experiment.id || targetId || 1
 
     return (
         <div className="welcome-experiment-page">
@@ -52,7 +44,7 @@ function WelcomePage({ experiment, onBack, user, onLogout }) {
             <main className="welcome-main-container">
                 {/* Navigation / Back Button */}
                 <div className="top-nav-bar">
-                    <button className="back-dashboard-btn" onClick={onBack}>
+                    <button className="back-dashboard-btn" onClick={() => navigate('/student')}>
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <polyline points="15 18 9 12 15 6" />
                         </svg>
@@ -63,7 +55,7 @@ function WelcomePage({ experiment, onBack, user, onLogout }) {
                 {/* Experiment Hero Header Card */}
                 <div className="welcome-hero-card">
                     <div className="hero-badge-tag">
-                        <span>Experiment #{experiment.experimentId || experiment.id}</span>
+                        <span>Experiment #{expId}</span>
                     </div>
                     <h1 className="hero-experiment-title">{experiment.title}</h1>
                     <p className="hero-experiment-subtitle">
@@ -73,7 +65,7 @@ function WelcomePage({ experiment, onBack, user, onLogout }) {
                     <div className="hero-actions">
                         <Button
                             className="launch-lab-btn"
-                            onClick={handleLaunchMainExperiment}
+                            onClick={() => navigate(`/experiment_${expId}_run`)}
                         >
                             Perform Experiment
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">

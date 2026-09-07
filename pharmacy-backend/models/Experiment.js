@@ -16,6 +16,10 @@ const experimentSchema = new mongoose.Schema(
       type: String,
       default: '',
     },
+    info: {
+      type: String,
+      default: '',
+    },
     equipment: {
       type: String,
       default: '',

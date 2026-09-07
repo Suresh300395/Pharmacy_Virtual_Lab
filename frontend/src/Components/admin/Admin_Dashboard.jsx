@@ -33,11 +33,13 @@ function Admin_Dashboard({ user, onLogout }) {
   const [formData, setFormData] = useState({
     experimentId: '',
     title: '',
+    info: '',
     equipment: '',
     equipmentImage: '',
     principle: '',
     principleImage: '',
     instructionsText: '',
+    isActive: true,
   })
   const [isSaving, setIsSaving] = useState(false)
 
@@ -116,14 +118,20 @@ function Admin_Dashboard({ user, onLogout }) {
     }, 4000)
   }
 
+  // Active experiments count
+  const activeExperimentsCount = useMemo(() => {
+    return experiments.filter((exp) => exp.isActive !== false).length
+  }, [experiments])
+
   // Filtered experiments
   const filteredExperiments = useMemo(() => {
     return experiments.filter((exp) => {
       const term = searchTerm.toLowerCase()
       const titleMatch = exp.title ? exp.title.toLowerCase().includes(term) : false
+      const infoMatch = exp.info ? exp.info.toLowerCase().includes(term) : false
       const equipMatch = exp.equipment ? exp.equipment.toLowerCase().includes(term) : false
       const prinMatch = exp.principle ? exp.principle.toLowerCase().includes(term) : false
-      return titleMatch || equipMatch || prinMatch
+      return titleMatch || infoMatch || equipMatch || prinMatch
     })
   }, [experiments, searchTerm])
 
@@ -134,11 +142,13 @@ function Admin_Dashboard({ user, onLogout }) {
     setFormData({
       experimentId: nextId,
       title: '',
+      info: '',
       equipment: '',
       equipmentImage: '',
       principle: '',
       principleImage: '',
       instructionsText: '',
+      isActive: true,
     })
     setIsModalOpen(true)
   }
@@ -149,13 +159,66 @@ function Admin_Dashboard({ user, onLogout }) {
     setFormData({
       experimentId: exp.experimentId || '',
       title: exp.title || '',
+      info: exp.info || exp.title || '',
       equipment: exp.equipment || '',
       equipmentImage: exp.equipmentImage || '',
       principle: exp.principle || '',
       principleImage: exp.principleImage || '',
       instructionsText: Array.isArray(exp.instructions) ? exp.instructions.join('\n') : exp.instructions || '',
+      isActive: exp.isActive !== false,
     })
     setIsModalOpen(true)
+  }
+
+  // Toggle Active/Inactive Status in-place without page refresh
+  const handleToggleStatus = async (exp, e) => {
+    if (e) {
+      e.stopPropagation()
+      e.preventDefault()
+    }
+    const newStatus = exp.isActive === false ? true : false
+
+    // Optimistically update state in-place for instant UI feedback
+    setExperiments(prevExps =>
+      prevExps.map(item =>
+        (item._id && exp._id && item._id === exp._id) || (item.experimentId === exp.experimentId)
+          ? { ...item, isActive: newStatus }
+          : item
+      )
+    )
+
+    try {
+      const response = await fetch(`http://localhost:3003/api/experiments/${exp._id}/status`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isActive: newStatus }),
+      })
+      const data = await response.json()
+      if (response.ok && data.success) {
+        showStatus('success', `Experiment #${exp.experimentId || ''} status updated to ${newStatus ? 'Active' : 'Inactive'}.`)
+      } else {
+        // Rollback state on failure
+        setExperiments(prevExps =>
+          prevExps.map(item =>
+            (item._id && exp._id && item._id === exp._id) || (item.experimentId === exp.experimentId)
+              ? { ...item, isActive: exp.isActive }
+              : item
+          )
+        )
+        showStatus('error', data.message || 'Failed to update status.')
+      }
+    } catch (err) {
+      console.error('Error toggling status:', err)
+      // Rollback state on network error
+      setExperiments(prevExps =>
+        prevExps.map(item =>
+          (item._id && exp._id && item._id === exp._id) || (item.experimentId === exp.experimentId)
+            ? { ...item, isActive: exp.isActive }
+            : item
+        )
+      )
+      showStatus('error', 'Network error updating experiment status.')
+    }
   }
 
   // Save form handler (Create / Update)
@@ -171,11 +234,13 @@ function Admin_Dashboard({ user, onLogout }) {
       const payload = {
         experimentId: Number(formData.experimentId),
         title: formData.title,
+        info: formData.info,
         equipment: formData.equipment,
         equipmentImage: formData.equipmentImage,
         principle: formData.principle,
         principleImage: formData.principleImage,
         instructions: formData.instructionsText.split('\n').map(s => s.trim()).filter(Boolean),
+        isActive: formData.isActive,
       }
 
       const url = editingExp
@@ -270,7 +335,7 @@ function Admin_Dashboard({ user, onLogout }) {
                     <line x1="14" y1="9.31" x2="10" y2="9.31" />
                   </svg>
                 </div>
-                <div className="card-badge">{experiments.length} Experiments</div>
+                <div className="card-badge">{activeExperimentsCount} Active / {experiments.length} Total</div>
                 <h3 className="card-title">Pharmacology Experiments</h3>
                 <p className="card-desc">
                   Create, edit, and manage titles, equipment details, scientific principles, and step-by-step lab instructions.
@@ -351,6 +416,10 @@ function Admin_Dashboard({ user, onLogout }) {
                 <div className="stat-pill">
                   <span className="pill-number">{experiments.length}</span>
                   <span className="pill-text">Total Experiments</span>
+                </div>
+                <div className="stat-pill active-pill">
+                  <span className="pill-number">{activeExperimentsCount}</span>
+                  <span className="pill-text">Active Experiments</span>
                 </div>
                 <button className="create-exp-btn" onClick={handleOpenCreateModal}>
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -435,9 +504,18 @@ function Admin_Dashboard({ user, onLogout }) {
                     >
                       <div className="exp-card-top flex-between">
                         <span className="exp-id-tag">#{exp.experimentId || idx + 1}</span>
-                        <span className="exp-steps-badge">
-                          {Array.isArray(exp.instructions) ? `${exp.instructions.length} Steps` : '4 Steps'}
-                        </span>
+                        <div className="exp-badges-right">
+                          <span
+                            className={`status-pill ${exp.isActive !== false ? 'active' : 'inactive'}`}
+                            onClick={(e) => handleToggleStatus(exp, e)}
+                            title="Click to toggle status"
+                          >
+                            {exp.isActive !== false ? '● Active' : '○ Inactive'}
+                          </span>
+                          <span className="exp-steps-badge">
+                            {Array.isArray(exp.instructions) ? `${exp.instructions.length} Steps` : '4 Steps'}
+                          </span>
+                        </div>
                       </div>
 
                       <h3 className="exp-card-heading">{exp.title}</h3>
@@ -469,6 +547,13 @@ function Admin_Dashboard({ user, onLogout }) {
                         </button>
 
                         <div className="card-footer-right">
+                          <button
+                            className={`card-btn status-toggle ${exp.isActive !== false ? 'active' : 'inactive'}`}
+                            onClick={(e) => handleToggleStatus(exp, e)}
+                            title={exp.isActive !== false ? 'Click to deactivate (hide from students)' : 'Click to activate (show to students)'}
+                          >
+                            {exp.isActive !== false ? 'Active' : 'Inactive'}
+                          </button>
                           <button
                             className="card-btn edit"
                             onClick={() => handleOpenEditModal(exp)}
@@ -510,6 +595,7 @@ function Admin_Dashboard({ user, onLogout }) {
                       <tr>
                         <th className="th-id">#</th>
                         <th className="th-title">Experiment Title</th>
+                        <th className="th-status">Status</th>
                         <th className="th-equipment">Equipment</th>
                         <th className="th-principle">Scientific Principle</th>
                         <th className="th-instructions">Instructions</th>
@@ -519,7 +605,7 @@ function Admin_Dashboard({ user, onLogout }) {
                     <tbody>
                       {isLoading ? (
                         <tr>
-                          <td colSpan="6" className="table-empty-cell">
+                          <td colSpan="7" className="table-empty-cell">
                             Loading experiments from database...
                           </td>
                         </tr>
@@ -534,6 +620,15 @@ function Admin_Dashboard({ user, onLogout }) {
                               >
                                 {exp.title}
                               </div>
+                            </td>
+                            <td className="td-status">
+                              <button
+                                className={`table-status-badge ${exp.isActive !== false ? 'active' : 'inactive'}`}
+                                onClick={(e) => handleToggleStatus(exp, e)}
+                                title="Click to toggle active/inactive status"
+                              >
+                                {exp.isActive !== false ? 'Active' : 'Inactive'}
+                              </button>
                             </td>
                             <td className="td-equipment">
                               <div className="cell-snippet" title={exp.equipment}>
@@ -608,6 +703,20 @@ function Admin_Dashboard({ user, onLogout }) {
               </div>
 
               <div className="detail-modal-body">
+                {selectedExpDetails.info && (
+                  <div className="detail-info-block">
+                    <h4>
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <line x1="4" y1="12" x2="20" y2="12" />
+                        <line x1="4" y1="6" x2="20" y2="6" />
+                        <line x1="4" y1="18" x2="20" y2="18" />
+                      </svg>
+                      Experiment Banner Info (info)
+                    </h4>
+                    <p><strong>{selectedExpDetails.info}</strong></p>
+                  </div>
+                )}
+
                 <div className="detail-info-block">
                   <h4>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -725,16 +834,38 @@ function Admin_Dashboard({ user, onLogout }) {
                     />
                   </div>
 
-                  <div className="form-group col-title">
-                    <label>Experiment Title *</label>
-                    <input
-                      type="text"
-                      placeholder="e.g. Study of muscle relaxant activity..."
-                      value={formData.title}
-                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      required
-                    />
+                  <div className="form-group col-status-select">
+                    <label>Status (Active / Inactive)</label>
+                    <select
+                      value={formData.isActive ? 'active' : 'inactive'}
+                      onChange={(e) => setFormData({ ...formData, isActive: e.target.value === 'active' })}
+                      className="form-select-status"
+                    >
+                      <option value="active">Active (Visible to Students)</option>
+                      <option value="inactive">Inactive (Hidden from Students)</option>
+                    </select>
                   </div>
+                </div>
+
+                <div className="form-group">
+                  <label>Experiment Title *</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. Study of muscle relaxant activity..."
+                    value={formData.title}
+                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    required
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label>Experiment Banner Info / Heading (info)</label>
+                  <input
+                    type="text"
+                    placeholder="e.g. EFFECT OF CNS SUPPRESSANT AND SKELATEL MUSCLE RELAXANT DRUG..."
+                    value={formData.info}
+                    onChange={(e) => setFormData({ ...formData, info: e.target.value })}
+                  />
                 </div>
 
                 {/* Equipment Section with Image Upload */}

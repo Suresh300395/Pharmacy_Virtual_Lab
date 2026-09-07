@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const mongoose = require('mongoose');
 const fs = require('fs');
 const path = require('path');
 const Experiment = require('../models/Experiment');
@@ -50,9 +51,29 @@ router.post('/upload', async (req, res) => {
   }
 });
 
+// Helper function to auto sync/populate missing info field in DB for all existing records
+async function syncInfoFieldInDB() {
+  try {
+    const allExps = await Experiment.find();
+    for (const exp of allExps) {
+      if (exp.info === undefined || exp.info === null || exp.info === '') {
+        if (Number(exp.experimentId) === 1) {
+          exp.info = 'EFFECT OF CNS SUPPRESSANT AND SKELATEL MUSCLE RELAXANT DRUG ON MICE USING ROTAROD APPARATUS';
+        } else {
+          exp.info = exp.title ? exp.title.toUpperCase() : '';
+        }
+        await exp.save().catch(() => {});
+      }
+    }
+  } catch (err) {
+    console.error('Error syncing info field in DB:', err);
+  }
+}
+
 // 1. GET /api/experiments - Fetch all experiments
 router.get('/', async (req, res) => {
   try {
+    await syncInfoFieldInDB();
     const experiments = await Experiment.find().sort({ experimentId: 1 });
     return res.status(200).json({
       success: true,
@@ -68,13 +89,36 @@ router.get('/', async (req, res) => {
   }
 });
 
-// 2. GET /api/experiments/:id - Fetch single experiment by ID
+// 2. GET /api/experiments/:id - Fetch single experiment by MongoDB _id or numeric experimentId
 router.get('/:id', async (req, res) => {
   try {
-    const experiment = await Experiment.findById(req.params.id);
+    const { id } = req.params;
+    let experiment = null;
+
+    // Check if id is numeric experimentId (e.g. 1, 2, 3...)
+    if (!isNaN(id) && Number(id) > 0) {
+      experiment = await Experiment.findOne({ experimentId: Number(id) });
+    }
+
+    // If not found and id is valid MongoDB ObjectId
+    if (!experiment && mongoose.Types.ObjectId.isValid(id)) {
+      experiment = await Experiment.findById(id);
+    }
+
     if (!experiment) {
       return res.status(404).json({ success: false, message: 'Experiment not found.' });
     }
+
+    // Auto update info key if missing
+    if (experiment.info === undefined || experiment.info === null || experiment.info === '') {
+      if (Number(experiment.experimentId) === 1) {
+        experiment.info = 'EFFECT OF CNS SUPPRESSANT AND SKELATEL MUSCLE RELAXANT DRUG ON MICE USING ROTAROD APPARATUS';
+      } else {
+        experiment.info = experiment.title ? experiment.title.toUpperCase() : '';
+      }
+      await experiment.save().catch(() => {});
+    }
+
     return res.status(200).json({ success: true, experiment });
   } catch (error) {
     console.error('Error fetching experiment details:', error);
@@ -85,7 +129,7 @@ router.get('/:id', async (req, res) => {
 // 3. POST /api/experiments - Create a new experiment
 router.post('/', async (req, res) => {
   try {
-    const { title, equipment, equipmentImage, principle, principleImage, instructions, experimentId } = req.body;
+    const { title, info, equipment, equipmentImage, principle, principleImage, instructions, experimentId, isActive } = req.body;
 
     if (!title || title.trim() === '') {
       return res.status(400).json({ success: false, message: 'Experiment title is required.' });
@@ -113,12 +157,13 @@ router.post('/', async (req, res) => {
     const newExperiment = await Experiment.create({
       experimentId: newExpId,
       title: title.trim(),
+      info: info ? info.trim() : '',
       equipment: equipment ? equipment.trim() : '',
       equipmentImage: savedEquipmentImg ? savedEquipmentImg.trim() : '',
       principle: principle ? principle.trim() : '',
       principleImage: savedPrincipleImg ? savedPrincipleImg.trim() : '',
       instructions: processedInstructions,
-      isActive: true,
+      isActive: isActive !== undefined ? Boolean(isActive) : true,
     });
 
     return res.status(201).json({
@@ -135,7 +180,7 @@ router.post('/', async (req, res) => {
 // 4. PUT /api/experiments/:id - Update an existing experiment
 router.put('/:id', async (req, res) => {
   try {
-    const { title, equipment, equipmentImage, principle, principleImage, instructions, experimentId } = req.body;
+    const { title, info, equipment, equipmentImage, principle, principleImage, instructions, experimentId, isActive } = req.body;
 
     const experiment = await Experiment.findById(req.params.id);
     if (!experiment) {
@@ -143,6 +188,7 @@ router.put('/:id', async (req, res) => {
     }
 
     if (title) experiment.title = title.trim();
+    if (info !== undefined) experiment.info = info.trim();
     if (equipment !== undefined) experiment.equipment = equipment.trim();
     if (equipmentImage !== undefined) {
       experiment.equipmentImage = saveBase64Image(equipmentImage, 'equip');
@@ -152,6 +198,7 @@ router.put('/:id', async (req, res) => {
       experiment.principleImage = saveBase64Image(principleImage, 'principle');
     }
     if (experimentId) experiment.experimentId = Number(experimentId);
+    if (isActive !== undefined) experiment.isActive = Boolean(isActive);
 
     if (instructions !== undefined) {
       if (Array.isArray(instructions)) {
@@ -174,7 +221,34 @@ router.put('/:id', async (req, res) => {
   }
 });
 
-// 5. DELETE /api/experiments/:id - Delete an experiment
+// 5. PATCH /api/experiments/:id/status - Toggle active/inactive status
+router.patch('/:id/status', async (req, res) => {
+  try {
+    const experiment = await Experiment.findById(req.params.id);
+    if (!experiment) {
+      return res.status(404).json({ success: false, message: 'Experiment not found.' });
+    }
+
+    if (req.body.isActive !== undefined) {
+      experiment.isActive = Boolean(req.body.isActive);
+    } else {
+      experiment.isActive = !experiment.isActive;
+    }
+
+    await experiment.save();
+
+    return res.status(200).json({
+      success: true,
+      message: `Experiment status set to ${experiment.isActive ? 'Active' : 'Inactive'}.`,
+      experiment,
+    });
+  } catch (error) {
+    console.error('Error updating status:', error);
+    return res.status(500).json({ success: false, message: 'Failed to update status.' });
+  }
+});
+
+// 6. DELETE /api/experiments/:id - Delete an experiment
 router.delete('/:id', async (req, res) => {
   try {
     const deletedExp = await Experiment.findByIdAndDelete(req.params.id);
